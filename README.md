@@ -1,2 +1,2 @@
 # algo
-The program creates ELO ratings for teams in the top 5 leagues, based on historic match data. Finds upcoming matches for these teams and compares betting lines with my lines, that are based on the ELO ratings. Thus trying to find "opportunities". Match data are in the ALGO [OLD] folder. The program uses outdated scraping. The files outside that folder are an unfinished attempt to update the code. Made in December 2022.
+Based on past match data, elo ratings for teams in the top 5 leagues are created. The program finds upcoming matches between the teams and compares the betting lines with my elo-derived lines. Match data is in the ALGO [OLD] folder. The files outside that folder are an unfinished attempt to update the code. Made in December 2022.
