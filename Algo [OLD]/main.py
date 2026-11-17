@@ -185,16 +185,16 @@ def csv_format_stats(table,league):
     table=table[107:]
     table=[table.replace('–',',')]
 
-    with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/'+league+'.csv','a',encoding='utf-8',newline='') as file: # Appends new matches to the csv file
+    with open(league+'/'+league+'.csv','a',encoding='utf-8',newline='') as file: # Appends new matches to the csv file
         writer_object=writer(file)
         writer_object.writerow(table) 
 
     # Removes useless information remaining on the csv file
-    with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/'+league+'.csv') as file: 
+    with open(league+'/'+league+'.csv') as file: 
         result=file.read()
         new_result=result.replace('"','')
 
-    with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/'+league+'.csv','w') as file:
+    with open(league+'/'+league+'.csv','w') as file:
         file.write(new_result)
 
 def xG_Elo_System(actual_outcome_xG,pointer_home,pointer_away,xG_elo_ratings,xG_hfa):
@@ -219,7 +219,7 @@ def MarWin_Elo_System(actual_outcome_win,pointer_home,pointer_away,marwin_elo_ra
 
 def assign_elo(start,end,count,teams_data,xG_hfa,marwin_hfa,league,total_season_games,matchday_games):
     print('\nCalculating '+league+' elos...')
-    data=pd.read_csv('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/'+league+'.csv')
+    data=pd.read_csv(league+'/'+league+'.csv')
 
     #Initializing variables to calculate elos (we are doing the temp stuff to get rid of useless information)
     temp_teams=teams_data.loc[:,'name']
@@ -275,7 +275,7 @@ def assign_elo(start,end,count,teams_data,xG_hfa,marwin_hfa,league,total_season_
             in_league=[False]*len(teams) # Everybody starts as not in the league at the start of every season
             # Reads information of In_League.txt
             if count!=1: 
-                with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/In_League.txt') as file: 
+                with open(league+'/In_League.txt') as file: 
                     line=file.readlines()
                     for j in range(len(line)):
                         if line[j]=='True\n':
@@ -298,7 +298,7 @@ def assign_elo(start,end,count,teams_data,xG_hfa,marwin_hfa,league,total_season_
                 marwin_elo_ratings.append(900)
                 average_elo_ratings.append(900)
                 in_league.append(True)
-                with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Teams_Elo.csv','a',encoding='utf-8',newline='') as file:
+                with open(league+'/Teams_Elo.csv','a',encoding='utf-8',newline='') as file:
                     file.write('\n'+home_team+',900,900,900')
             if new_team_away:
                 teams.append(away_team)
@@ -306,7 +306,7 @@ def assign_elo(start,end,count,teams_data,xG_hfa,marwin_hfa,league,total_season_
                 marwin_elo_ratings.append(900)
                 average_elo_ratings.append(900)
                 in_league.append(True)
-                with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Teams_Elo.csv','a',encoding='utf-8',newline='') as file:
+                with open(league+'/Teams_Elo.csv','a',encoding='utf-8',newline='') as file:
                     file.write('\n'+away_team+',900,900,900')     
 
             # Every new team of the season has been added at this point, so we move start and end to index the next season
@@ -322,7 +322,7 @@ def assign_elo(start,end,count,teams_data,xG_hfa,marwin_hfa,league,total_season_
                         average_elo_ratings[j]=900
 
             # Have to write it in a txt file incase the matches of the first matchday dont finish in the same day and I have to retrieve the in_league information a second time
-            with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/In_League.txt','w') as file:
+            with open(league+'/In_League.txt','w') as file:
                 for j in range(len(in_league)):
                     if j==0:
                         file.write(str(in_league[j]))
@@ -343,30 +343,30 @@ def assign_elo(start,end,count,teams_data,xG_hfa,marwin_hfa,league,total_season_
         # Elo assignment before match
         average_elo_ratings[pointer_home]=(xG_elo_ratings[pointer_home]+marwin_elo_ratings[pointer_home])/2
         data.loc[i,'H_ELO']=average_elo_ratings[pointer_home]
-        data.to_csv('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/'+league+'.csv', index=False)
+        data.to_csv(league+'/'+league+'.csv', index=False)
         average_elo_ratings[pointer_away]=(xG_elo_ratings[pointer_away]+marwin_elo_ratings[pointer_away])/2
         data.loc[i,'A_ELO']=average_elo_ratings[pointer_away]
-        data.to_csv('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/'+league+'.csv', index=False)
+        data.to_csv(league+'/'+league+'.csv', index=False)
 
         # Calls elo calculation functions
         xG_elo_ratings,xG_hfa=xG_Elo_System(actual_outcome_xG,pointer_home,pointer_away,xG_elo_ratings,xG_hfa)
         marwin_elo_ratings,marwin_hfa=MarWin_Elo_System(actual_outcome_win,pointer_home,pointer_away,marwin_elo_ratings,marwin_hfa,scaling_factor,scaling_pointer)
 
     # Updating Teams_Elo.csv and Start-End-Count.txt at the end of the loop
-    teams_data=pd.read_csv('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Teams_Elo.csv')
+    teams_data=pd.read_csv(league+'/Teams_Elo.csv')
     teams_data['xG_elo']=xG_elo_ratings
-    teams_data.to_csv('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Teams_Elo.csv',index=False)
+    teams_data.to_csv(league+'/Teams_Elo.csv',index=False)
     teams_data['marwin_elo']=marwin_elo_ratings
-    teams_data.to_csv('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Teams_Elo.csv',index=False)
+    teams_data.to_csv(league+'/Teams_Elo.csv',index=False)
     teams_data['average_elo']=(teams_data['xG_elo']+teams_data['marwin_elo'])/2
-    teams_data.to_csv('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Teams_Elo.csv',index=False)
-    with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Start-End-Count-xG_hfa-marwin_hfa.txt','w') as file:
+    teams_data.to_csv(league+'/Teams_Elo.csv',index=False)
+    with open(league+'/Start-End-Count-xG_hfa-marwin_hfa.txt','w') as file:
         file.write(str(start)+'\n'+str(end)+'\n'+str(count)+'\n'+str(xG_hfa)+'\n'+str(marwin_hfa))
 
     # Removes new line at the end of the Teams_Elo.csv
-    with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Teams_Elo.csv') as file:
+    with open(league+'/Teams_Elo.csv') as file:
         content=file.read().rstrip('\n')
-    with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Teams_Elo.csv','w') as file:
+    with open(league+'/Teams_Elo.csv','w') as file:
         file.write(content)
         file.truncate()  
 
@@ -1047,7 +1047,7 @@ potd_flag=False
 while True:
     league,xpath_league_num,league_num,matchday_games,total_season_games,driver_get_link,flashscore_link,site_struct_1,other_site_struct_1,site_struct_2,other_site_struct_2,flashscore_dict=league_differences(league_num)
         
-    with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Start-End-Count-xG_hfa-marwin_hfa.txt','r') as file: # Gets information needed for later
+    with open(league+'/Start-End-Count-xG_hfa-marwin_hfa.txt','r') as file: # Gets information needed for later
         lines=file.readlines()
         start=lines[0][:len(lines[0])-1]
         end=lines[1][:len(lines[1])-1]
@@ -1056,8 +1056,8 @@ while True:
         marwin_hfa=lines[4]
     hfa=(float(xG_hfa)+float(marwin_hfa))/2
 
-    data=pd.read_csv('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/'+league+'.csv')
-    teams_data=pd.read_csv('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Teams_Elo.csv')
+    data=pd.read_csv(league+'/'+league+'.csv')
+    teams_data=pd.read_csv(league+'/Teams_Elo.csv')
 
     if attempt==0:
         print('Do you want to:\n(a) Update the database and get predictions (b) Get predictions')
@@ -1069,11 +1069,11 @@ while True:
 
     if choice=='a':
         print('\nLoading '+league+' stats...')
-        with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/'+league+'.csv') as file: # Used for later
+        with open(league+'/'+league+'.csv') as file: # Used for later
             starting_lenght=len(file.readlines())
 
         today=str(date.today())
-        with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Updated_Till.txt') as file: # last_date shows the when the last match on the database happened
+        with open(league+'/Updated_Till.txt') as file: # last_date shows the when the last match on the database happened
             other_line=file.readlines()
             last_date=other_line[-1]
 
@@ -1081,7 +1081,7 @@ while True:
         if not error:    
             league_num+=1
             if flag: # Flag checks if any new games have to be added
-                with open('C:/Users/Kostas/Desktop/Coding/Codes/Algo/Algo [OLD]/'+league+'/Updated_Till.txt','w') as file: # Keeps date of when the last game on the database happened
+                with open(league+'/Updated_Till.txt','w') as file: # Keeps date of when the last game on the database happened
                     file.write(updated_till)
                 csv_format_stats(table,league)
                 assign_elo(start,end,count,teams_data,xG_hfa,marwin_hfa,league,total_season_games,matchday_games)
